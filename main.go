@@ -232,16 +232,6 @@ func main() {
 		fmt.Printf("You pressed ctrl + C. User interrupted infinite loop.")
 		os.Exit(0)
 	}()
-
-	//printTx(block.BlockTransactions)
-	//fmt.Println(lastHeight)
 	listen(done)
-	//fmt.Printf("%+v", block)
-	//time.Sleep(5 * time.Second)
-	//done <- true
 	<-quit
-
-	/*
-
-	 */
 }
