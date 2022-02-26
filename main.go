@@ -11,8 +11,8 @@ import (
 	"github.com/jwalton/gchalk"
 )
 
-func fetchLatestTx(lastHeight float32) (float32, error) {
-	node := ergo.Node{Url: "http://192.168.3.99:9053"}
+func fetchLatestTx(url string, lastHeight float32) (float32, error) {
+	node := ergo.Node{Url: url}
 	latestHeight, err := node.LastHeight()
 	if err != nil {
 		return 0, err
@@ -37,7 +37,7 @@ func fetchLatestTx(lastHeight float32) (float32, error) {
 	return lastHeight, nil
 }
 
-func listen(done chan bool) {
+func listen(url string, done chan bool) {
 	ticker := time.NewTicker(1 * time.Second)
 	go func() {
 		latestHeight := float32(-1)
@@ -48,7 +48,7 @@ func listen(done chan bool) {
 				return
 			case <-ticker.C:
 				//fmt.Println("Tick at", t)
-				latestHeight2, err := fetchLatestTx(latestHeight)
+				latestHeight2, err := fetchLatestTx(url, latestHeight)
 				if err != nil {
 					panic(err)
 				}
@@ -109,7 +109,7 @@ func printTx(tx ergo.Transaction) {
 }
 
 func main() {
-	//color.Red("■ We have red")
+	url := os.Args[1]
 	done := make(chan bool, 1)
 	var quit = make(chan struct{})
 	sigs := make(chan os.Signal, 1)
@@ -121,6 +121,6 @@ func main() {
 		fmt.Printf("You pressed ctrl + C. User interrupted infinite loop.")
 		os.Exit(0)
 	}()
-	listen(done)
+	listen(url, done)
 	<-quit
 }
